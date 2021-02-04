@@ -14,6 +14,7 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
     if (err) throw err;
+    initialPrompt();
 });
 
 const initialPrompt = () => {
@@ -31,9 +32,11 @@ const initialPrompt = () => {
         .then((answer) => {
             switch (answer.action) {
                 case 'Add a department, role, or employee.':
+                    addPrompt();
                     break;
                 
                 case 'View departments, roles, or employees.':
+                    viewPrompt();
                     break;
 
                 case 'Update employee roles.':
@@ -41,6 +44,56 @@ const initialPrompt = () => {
                 
                 default:
                     console.log(`Invalid action: ${answer.action}`);
+                    break;
+            }
+        });
+};
+
+const addPrompt = () => {
+    inquirer
+        .prompt({
+            name: 'addAction',
+            type: 'rawlist',
+            choices: [
+                'Add a department.',
+                'Add a role.',
+                'Add an employee'
+            ],
+        })
+        .then((answer) => {
+            switch (answer.action) {
+                case 'Add a department':
+                    break;
+
+                case 'Add a role.':
+                    break;
+
+                case 'Add an employee':
+                    break;
+            }
+        });
+};
+
+const viewPrompt = () => {
+    inquirer
+        .prompt({
+            name: 'viewAction',
+            type: 'rawlist',
+            choices: [
+                'View a department.',
+                'View a role.',
+                'View an employee'
+            ],
+        })
+        .then((answer) => {
+            switch (answer.action) {
+                case 'View a department':
+                    break;
+
+                case 'View a role.':
+                    break;
+
+                case 'View an employee':
                     break;
             }
         });
