@@ -63,12 +63,15 @@ const addPrompt = () => {
         .then((answer) => {
             switch (answer.action) {
                 case 'Add a department':
+                    addDepartment();
                     break;
 
                 case 'Add a role.':
+                    addRole();
                     break;
 
                 case 'Add an employee':
+                    addEmployee();
                     break;
             }
         });
@@ -80,21 +83,132 @@ const viewPrompt = () => {
             name: 'viewAction',
             type: 'rawlist',
             choices: [
-                'View a department.',
-                'View a role.',
-                'View an employee'
+                'View departments.',
+                'View roles.',
+                'View employees.'
             ],
         })
         .then((answer) => {
             switch (answer.action) {
-                case 'View a department':
+                case 'View departments.':
+                    viewDepartment();
                     break;
 
-                case 'View a role.':
+                case 'View roles.':
+                    viewRole();
                     break;
 
-                case 'View an employee':
+                case 'View employees.':
+                    viewEmployee();
                     break;
             }
         });
+};
+
+const addDepartment = () => {
+    inquirer
+        .prompt({
+            name: 'departmentName',
+            type: 'input',
+            message: 'Which department would you like to add?',
+        })
+        .then((answer) => {
+            connection.query(
+                'insert into department set ?',
+                {
+                    name: answer.departmentName
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('Department added succesfully!');
+                    initialPrompt();
+                }
+            );
+        });
+};
+
+const addRole = () => {
+    inquirer
+        .prompt([
+            {
+                name: 'roleName',
+                type: 'input',
+                message: 'Which role would you like to add?',
+            },
+            {
+                name: 'salary',
+                type: 'input',
+                message: 'What is the salary?',
+            },
+        ])
+        .then((answer) => {
+            connection.query(
+                'insert into role set ?',
+                {
+                    title: answer.roleName,
+                    salary: answer.salary
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('Role added succesfully!');
+                    initialPrompt();
+                }
+            );
+        });
+};
+
+const addEmployee = () => {
+    inquirer
+        .prompt([
+            {
+                name: 'firstName',
+                type: 'input',
+                message: 'What is their first name?'
+            },
+            {
+                name: 'lastName',
+                type: 'input',
+                message: 'What is their last name?'
+            },
+            {
+                name: 'manager',
+                type: 'input',
+                message: 'Who is their manager?'
+            }
+        ])
+        .then((answer) => {
+            connection.query(
+                'insert into employee set ?',
+                {
+                    first_name: answer.firstName,
+                    last_name: answer.lastName,
+                    manager: answer.manager
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('Employee added succesfully!');
+                    initialPrompt();
+                }
+            );
+        });
+};
+
+const viewDepartment = () => {
+    const query = 'select name from department';
+    connection.query(query, (err, res) => {
+        res.forEach(({ name }) => console.log(name));
+        initialPrompt();
+    });
+};
+
+const viewRole = () => {
+    const query = 'select title from role';
+    connection.query(query, (err, res) => {
+        res.forEach(({ title }) => console.log(title));
+        initialPrompt();
+    })
+};
+
+const viewEmployee = () => {
+
 };

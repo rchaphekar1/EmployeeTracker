@@ -3,24 +3,28 @@ create database employee_trackerDB;
 use employee_trackerDB;
 
 create table department (
-    id integer not null auto_increment,
+    department_id integer not null auto_increment,
     name varchar(30) null,
-    primary key (id)
+    primary key (department_id)
 );
 
 create table role (
-    id integer not null auto_increment,
+    role_id integer not null auto_increment,
     title varchar(30) null,
     salary decimal (10,4) null,
-    department_id integer not null
+    department_id integer not null,
+    primary key (role_id),
+    foreign key (department_id) references department (department_id) 
 );
 
 create table employee (
-    id integer not null auto_increment,
+    employee_id integer not null auto_increment,
     first_name varchar(30) null,
     last_name varchar(30) null,
     role_id integer not null,
-    manager integer null
+    manager integer null,
+    primary key (employee_id),
+    foreign key (role_id) references role (role_id)
 );
 
 select * from department;
