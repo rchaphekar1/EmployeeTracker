@@ -26,7 +26,8 @@ const initialPrompt = () => {
             choices: [
                 'Add a department, role, or employee.',
                 'View departments, roles, or employees.',
-                'Update employee roles.'
+                'Update employee roles.',
+                'Exit'
             ],
         })
         .then((answer) => {
@@ -40,6 +41,11 @@ const initialPrompt = () => {
                     break;
 
                 case 'Update employee roles.':
+                    changeRole();
+                    break;
+
+                case 'Exit':
+                    connection.end();
                     break;
                 
                 default:
@@ -54,15 +60,16 @@ const addPrompt = () => {
         .prompt({
             name: 'addAction',
             type: 'rawlist',
+            message: 'What would you like to add?',
             choices: [
                 'Add a department.',
                 'Add a role.',
-                'Add an employee'
+                'Add an employee.'
             ],
         })
         .then((answer) => {
-            switch (answer.action) {
-                case 'Add a department':
+            switch (answer.addAction) {
+                case 'Add a department.':
                     addDepartment();
                     break;
 
@@ -70,7 +77,7 @@ const addPrompt = () => {
                     addRole();
                     break;
 
-                case 'Add an employee':
+                case 'Add an employee.':
                     addEmployee();
                     break;
             }
@@ -89,7 +96,7 @@ const viewPrompt = () => {
             ],
         })
         .then((answer) => {
-            switch (answer.action) {
+            switch (answer.viewAction) {
                 case 'View departments.':
                     viewDepartment();
                     break;
@@ -210,5 +217,36 @@ const viewRole = () => {
 };
 
 const viewEmployee = () => {
+    const query = 'select first_name, last_name from employee';
+    connection.query(query, (err, res) => {
+        res.forEach(({ first_name, last_name}) => console.log (first_name, last_name));
+        initialPrompt();
+    })
+};
 
+const changeRole = () => {
+    connnection.query('select * from role', (err, results) => {
+        if (err) throw err;
+        const roleArray = [];
+        results.forEach(({ title }) => {
+            roleArray.push(title);
+        });
+        inquirer
+            .prompt([
+                {
+                    name: 'choice',
+                    type: 'rawlist',
+                    message: 'What role would you like to change?',
+                    choices: roleArray
+                }
+            ])
+            .then((answer) => {
+                let chosenRole;
+                results.forEach((role) => {
+                    if (role.title === answer.choice) {
+                        chosenRole = role;
+                    }
+                });
+            });
+    });
 };
