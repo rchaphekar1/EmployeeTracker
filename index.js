@@ -17,6 +17,8 @@ connection.connect((err) => {
     initialPrompt();
 });
 
+console.log('Welcome to Employee Management System!')
+
 const initialPrompt = () => {
     inquirer
         .prompt({
@@ -80,6 +82,9 @@ const addPrompt = () => {
                 case 'Add an employee.':
                     addEmployee();
                     break;
+
+                default:
+                    break;
             }
         });
 };
@@ -107,6 +112,9 @@ const viewPrompt = () => {
 
                 case 'View employees.':
                     viewEmployee();
+                    break;
+
+                default:
                     break;
             }
         });
@@ -247,6 +255,37 @@ const changeRole = () => {
                         chosenRole = role;
                     }
                 });
+            });
+        inquirer
+            .prompt([
+                {
+                    name: 'title',
+                    type: 'input',
+                    message: 'Please input the new title.'
+                },
+                {
+                    name: 'salary',
+                    type: 'input',
+                    message: 'Please input the new salary'
+                }
+            ])
+            .then((answer) => {
+                connection.query(
+                    'update role set ? where ?',
+                    [
+                        {
+                            title: answer.title,
+                        },
+                        {
+                            salary: answer.salary,
+                        },
+                    ],
+                    (error) => {
+                        if (error) throw err;
+                        console.log('Role updated successfully!');
+                        initialPrompt();
+                    }
+                );
             });
     });
 };
